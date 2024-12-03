@@ -1,5 +1,0 @@
-com\example\wassit\model\Proprietaire.class
-com\example\wassit\service\ProprietaireService.class
-com\example\wassit\controller\ProprietaireController.class
-com\example\wassit\WassitApplication.class
-com\example\wassit\repository\ProprietaireRepository.class
