@@ -23,6 +23,9 @@ const routes: Routes = [
   imports: [
     CommonModule,
     RouterModule.forChild(routes),
+  ],
+  exports: [
+    ListAppartementComponent 
   ]
 })
 export class AppartementsModule { }
