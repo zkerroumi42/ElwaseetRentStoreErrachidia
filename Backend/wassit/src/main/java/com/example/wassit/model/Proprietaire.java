@@ -1,11 +1,12 @@
 package com.example.wassit.model;
 
-
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.List;
+
 @Entity
-@Data // Lombok annotation for getters, setters, and toString
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class Proprietaire {
@@ -17,8 +18,11 @@ public class Proprietaire {
     private String nom;
     private String prenom;
     private String telephone;
-    private Long idLocal; // Assuming id_local refers to a location ID
+    private Long idLocal; // Assuming id_local refers to the latest appartement ID
     private String cin;
     private String password;
     private String adresse;
+
+    @OneToMany(mappedBy = "proprietaire", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Appartement> appartements;
 }
