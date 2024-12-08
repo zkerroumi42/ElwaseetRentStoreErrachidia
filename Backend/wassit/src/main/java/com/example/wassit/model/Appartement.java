@@ -3,6 +3,8 @@ package com.example.wassit.model;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.List;
+
 @Entity
 @Data
 @NoArgsConstructor
@@ -26,4 +28,6 @@ public class Appartement {
     private String bonus;
     private String typelocataire;
     private String typeoffre;
+    @OneToMany(mappedBy = "appartement", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Chambre> chambres;
 }
