@@ -1,50 +1,79 @@
 <div class="container">
+  <!-- Affichage du tableau des appartements -->
+  <div *ngIf="!selectedAppartement">
     <mat-form-field>
       <mat-label>Search</mat-label>
       <input matInput (keyup)="applyFilter($event)" placeholder="Ex. name" />
     </mat-form-field>
-  
+
     <table mat-table [dataSource]="dataSource" matSort class="mat-elevation-z8">
-      <!-- Name Column -->
-      <ng-container matColumnDef="name">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header>Name</th>
-        <td mat-cell *matCellDef="let element">{{ element.name }}</td>
+      <!-- Ville Column -->
+      <ng-container matColumnDef="ville">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Ville</th>
+        <td mat-cell *matCellDef="let element">{{ element.ville }}</td>
       </ng-container>
-  
-      <!-- Email Column -->
-      <ng-container matColumnDef="email">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header>Email</th>
-        <td mat-cell *matCellDef="let element">{{ element.email }}</td>
+
+      <!-- Secteur Column -->
+      <ng-container matColumnDef="secteur">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Secteur</th>
+        <td mat-cell *matCellDef="let element">{{ element.secteur }}</td>
       </ng-container>
-  
-      <!-- Phone Column -->
-      <ng-container matColumnDef="phone">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header>Phone</th>
-        <td mat-cell *matCellDef="let element">{{ element.phone }}</td>
+
+      <!-- Prix Column -->
+      <ng-container matColumnDef="prix">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Prix</th>
+        <td mat-cell *matCellDef="let element">{{ element.prix }}</td>
       </ng-container>
-  
-      <!-- Position Column -->
-      <ng-container matColumnDef="poste">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header>Position</th>
-        <td mat-cell *matCellDef="let element">{{ element.poste }}</td>
+
+      <!-- Max Membres Column -->
+      <ng-container matColumnDef="maxMembre">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Max Membres</th>
+        <td mat-cell *matCellDef="let element">{{ element.maxMembre }}</td>
       </ng-container>
-  
+
+      <!-- Status Column -->
+      <ng-container matColumnDef="status">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Status</th>
+        <td mat-cell *matCellDef="let element">{{ element.status }}</td>
+      </ng-container>
+
       <!-- Action Column -->
       <ng-container matColumnDef="action">
         <th mat-header-cell *matHeaderCellDef>Action</th>
         <td mat-cell *matCellDef="let element">
-          <button
-            routerLink="/appartements/{{ element.id }}"
-            mat-raised-button
-            color="primary"
-          >
-            More Info
+          <button mat-raised-button color="primary" (click)="showChambres(element)">
+            Afficher les chambres
           </button>
         </td>
       </ng-container>
-  
+
       <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
       <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
     </table>
   </div>
-  
+
+  <!-- Affichage des chambres de l'appartement sélectionné -->
+  <div *ngIf="selectedAppartement" class="chambres-details">
+    <h3>Chambres de l'appartement {{ selectedAppartement.ville }}</h3>
+    <button (click)="closeChambres()">Retour vers appartements</button>
+    <table mat-table [dataSource]="selectedAppartement.chambres" class="mat-elevation-z8">
+      <ng-container matColumnDef="description">
+        <th mat-header-cell *matHeaderCellDef>Description</th>
+        <td mat-cell *matCellDef="let chambre">{{ chambre.description }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="prix">
+        <th mat-header-cell *matHeaderCellDef>Prix</th>
+        <td mat-cell *matCellDef="let chambre">{{ chambre.prix }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="status">
+        <th mat-header-cell *matHeaderCellDef>Status</th>
+        <td mat-cell *matCellDef="let chambre">{{ chambre.status }}</td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="['description', 'prix', 'status']"></tr>
+      <tr mat-row *matRowDef="let row; columns: ['description', 'prix', 'status']"></tr>
+    </table>
+  </div>
+</div>

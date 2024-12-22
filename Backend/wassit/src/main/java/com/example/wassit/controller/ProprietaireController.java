@@ -9,6 +9,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/proprietaires")
+@CrossOrigin(origins = "http://localhost:4200")
 public class ProprietaireController {
 
     @Autowired

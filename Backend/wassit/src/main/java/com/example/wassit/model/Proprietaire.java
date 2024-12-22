@@ -2,6 +2,7 @@ package com.example.wassit.model;
 
 import jakarta.persistence.*;
 import lombok.*;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import java.util.List;
 
@@ -23,6 +24,7 @@ public class Proprietaire {
     private String password;
     private String adresse;
 
+    @JsonManagedReference // Empêche les boucles infinies
     @OneToMany(mappedBy = "proprietaire", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Appartement> appartements;
 }

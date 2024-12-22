@@ -11,15 +11,19 @@
       <div class="line1"></div>
       <div class="line2"></div>
       <div class="line3"></div>
-      <label></label
-    ></label>
+      <label></label>
+    </label>
   </div>
-  <hr class="hr">
+  <hr class="hr" />
   <nav class="d-flex py-5 flex-column">
     <span routerLink="/appartements" class="mx-auto nav-items w-100 py-3 ps-3">
       <i style="font-size: 20px" class="bi bi-house-door-fill"></i>
+      <b *ngIf="!isOpen"> Appartements</b>
+    </span>
 
-      @if (!isOpen) {<b> Appartements</b>}
+    <span routerLink="/proprietaire" class="mx-auto nav-items w-100 py-3 ps-3">
+      <i style="font-size: 20px" class="bi bi-person-circle"></i>
+      <b *ngIf="!isOpen"> Propriétaire</b>
     </span>
   </nav>
 </aside>

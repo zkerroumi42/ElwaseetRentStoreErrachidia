@@ -1,37 +1,77 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
+import { AppartementService } from './appartement.service'; // Assurez-vous que le service est correctement importé
 
-import 'datatables.net';
-import 'datatables.net-bs4';
+// Définition de l'interface Chambre
+interface Chambre {
+  id: number;
+  description: string;
+  maxMembers: number;
+  prix: number;
+  status: string;
+  type: string;
+}
+
+// Définition de l'interface Appartement
+interface Appartement {
+  id: number;
+  ville: string;
+  secteur: string;
+  prix: number;
+  maxMembre: number;
+  description: string;
+  status: string;
+  bonus: string;
+  typelocataire: string;
+  typeoffre: string;
+  chambres: Chambre[];
+}
+
 @Component({
   selector: 'app-list-appartement',
   templateUrl: './list-appartement.component.html',
-  styleUrl: './list-appartement.component.css'
+  styleUrls: ['./list-appartement.component.css']
 })
 export class ListAppartementComponent implements OnInit {
-  displayedColumns: string[] = ['name', 'email', 'phone', 'poste', 'action'];
-  dataSource: MatTableDataSource<any>;
+  // Colonnes affichées dans le tableau
+  displayedColumns: string[] = ['ville', 'secteur', 'prix', 'maxMembre', 'status', 'action'];
+  dataSource: MatTableDataSource<Appartement> = new MatTableDataSource<Appartement>([]);
+  appartements: Appartement[] = []; // Liste des appartements récupérés
+  selectedAppartement: Appartement | null = null; // Appartement sélectionné
 
-  appartements: any[] = [
-    { name: 'John Doe', email: 'john.doe@example.com', phone: '123-456-7890', poste: 'Manager',id:'1' },
-    { name: 'Jane Smith', email: 'jane.smith@example.com', phone: '098-765-4321', poste: 'Developer',id:'2' },
-  ];
+  @ViewChild(MatSort) sort!: MatSort; // Référence pour le tri
 
-  @ViewChild(MatSort) sort!: MatSort;
+  constructor(private appartementService: AppartementService) {}
 
-  constructor() {
-    this.dataSource = new MatTableDataSource(this.appartements);
+  ngOnInit(): void {
+    // Récupération des appartements à partir du service
+    this.appartementService.getAppartements().subscribe(
+      data => {
+        console.log('Appartements récupérés :', data);
+        this.appartements = data;
+        this.dataSource = new MatTableDataSource<Appartement>(this.appartements);
+        this.dataSource.sort = this.sort; // Assigner le tri à la source de données
+      },
+      error => {
+        console.error('Erreur lors de la récupération des appartements :', error);
+      }
+    );
   }
 
-  ngOnInit() {
-    this.dataSource.sort = this.sort;
-  }
-
-  applyFilter(event: Event) {
+  // Filtrage des résultats dans le tableau
+  applyFilter(event: Event): void {
     const filterValue = (event.target as HTMLInputElement).value;
     this.dataSource.filter = filterValue.trim().toLowerCase();
   }
 
+  // Afficher les chambres de l'appartement sélectionné
+  showChambres(appartement: Appartement): void {
+    this.selectedAppartement = appartement;
+  }
 
+  // Revenir à la liste des appartements
+  closeChambres(): void {
+    this.selectedAppartement = null;
+  }
 }

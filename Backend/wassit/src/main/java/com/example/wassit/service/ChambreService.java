@@ -36,7 +36,7 @@ public class ChambreService {
         chambre.setType(chambreDetails.getType());
         chambre.setPrix(chambreDetails.getPrix());
         chambre.setDescription(chambreDetails.getDescription());
-        chambre.setMax_members(chambreDetails.getMax_members());
+        chambre.setMaxMembers(chambreDetails.getMaxMembers());
 
         return chambrerepo.save(chambre);
     }

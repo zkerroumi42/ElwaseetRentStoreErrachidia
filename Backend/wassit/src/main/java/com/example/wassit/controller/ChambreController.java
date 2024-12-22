@@ -31,7 +31,7 @@ public class ChambreController {
         Chambre existing = service.getDetails(id);
         if (existing != null) {
             existing.setDescription(chambre.getDescription());
-            existing.setMax_members(chambre.getMax_members());
+            existing.setMaxMembers(chambre.getMaxMembers());
             existing.setPrix(chambre.getPrix());
             existing.setStatus(chambre.getStatus());
             existing.setType(chambre.getType());
