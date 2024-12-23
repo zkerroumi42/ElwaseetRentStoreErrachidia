@@ -27,6 +27,15 @@ services:
       - "8080:8080"                         # Expose Spring Boot app on port 8080
     networks:
       - wassit-network                      # Assign to custom network
+  angular-frontend:
+    image: wassit-frontend
+    build:
+      context: .
+    ports:
+      - "4200:80"
+    networks:
+      - wassit-network
+
 
 volumes:
   mysql-data:                                # Volume for MySQL data persistence
