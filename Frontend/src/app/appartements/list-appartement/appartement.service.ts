@@ -13,7 +13,28 @@ export class AppartementService {
 
   // Récupérer les appartements depuis l'API
   getAppartements(): Observable<any[]> {
-    const appartements = this.http.get<any[]>(this.apiUrl);
-    return appartements; // Retourne l'Observable pour que le composant puisse s'abonner
+    return this.http.get<any[]>(this.apiUrl);
+  }
+
+  // Ajouter un nouvel appartement
+  addAppartement(appartement: any): Observable<any> {
+    const proprietaireId = appartement.proprietaireId;  // Récupérer l'ID du propriétaire depuis le modèle
+    const url = `${this.apiUrl}?proprietaireId=${proprietaireId}`; // Ajouter proprietaireId dans l'URL
+    return this.http.post<any>(url, appartement); // Envoyer l'appartement dans le body
+  }
+
+  // Mettre à jour un appartement existant
+  updateAppartement(appartement: any): Observable<any> {
+    return this.http.put<any>(`${this.apiUrl}/${appartement.id}`, appartement);
+  }
+
+  // Ajouter une chambre à un appartement
+  addChambre(appartementId: number, chambre: any): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/${appartementId}/chambres`, chambre);
+  }
+
+  // Mettre à jour une chambre d'un appartement
+  updateChambre(appartementId: number, chambre: any): Observable<any> {
+    return this.http.put<any>(`${this.apiUrl}/${appartementId}/chambres/${chambre.id}`, chambre);
   }
 }

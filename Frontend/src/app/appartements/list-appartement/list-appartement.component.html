@@ -1,79 +1,142 @@
 <div class="container">
-  <!-- Affichage du tableau des appartements -->
+  <!-- Liste des appartements -->
   <div *ngIf="!selectedAppartement">
-    <mat-form-field>
-      <mat-label>Search</mat-label>
-      <input matInput (keyup)="applyFilter($event)" placeholder="Ex. name" />
-    </mat-form-field>
+    <button mat-raised-button color="accent" (click)="openAppartementForm()">Ajouter un Appartement</button>
+    <div class="card-container">
+      <div *ngIf="!appartementFormVisible" class="card-container">
+        <mat-card *ngFor="let appartement of dataSource.data" class="mat-card">
 
-    <table mat-table [dataSource]="dataSource" matSort class="mat-elevation-z8">
-      <!-- Ville Column -->
-      <ng-container matColumnDef="ville">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header>Ville</th>
-        <td mat-cell *matCellDef="let element">{{ element.ville }}</td>
-      </ng-container>
+          <mat-card-header>
+            <mat-card-title>{{ appartement.ville }}</mat-card-title>
+            <mat-card-subtitle>{{ appartement.secteur }}</mat-card-subtitle>
+          </mat-card-header>
+          <img class="card-image" src="https://imganuncios.mitula.net/apprt_oued_el_hmera_1150085720532438703.jpg" alt="Appartement">
+          <mat-card-content>
+            <p><strong>Prix:</strong> {{ appartement.prix }} MAD</p>
+            <p><strong>Max Membres:</strong> {{ appartement.maxMembre }}</p>
+            <p><strong>Status:</strong> {{ appartement.status }}</p>
+          </mat-card-content>
+          <mat-card-actions>
+            <button mat-raised-button color="primary" (click)="showChambres(appartement)">
+              Chambres
+            </button><pre>   </pre>
+            <button mat-raised-button color="warn" (click)="openAppartementForm(appartement)">
+              Modifier
+            </button>
+          </mat-card-actions>
+        </mat-card>
+      </div>
 
-      <!-- Secteur Column -->
-      <ng-container matColumnDef="secteur">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header>Secteur</th>
-        <td mat-cell *matCellDef="let element">{{ element.secteur }}</td>
-      </ng-container>
+      <!-- Formulaire d'ajout/modification d'appartement -->
+      <div *ngIf="appartementFormVisible" class="form-container">
+        <h2>{{ appartementForm.id === 0 ? 'Ajouter un Appartement' : 'Modifier un Appartement' }}</h2>
+        <form (ngSubmit)="saveAppartement()">
+          <!-- Ville -->
+          <mat-form-field appearance="outline" class="narrow-form-field">
+            <mat-label>Ville</mat-label>
+            <input matInput [(ngModel)]="appartementForm.ville" name="ville" required>
+          </mat-form-field>
 
-      <!-- Prix Column -->
-      <ng-container matColumnDef="prix">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header>Prix</th>
-        <td mat-cell *matCellDef="let element">{{ element.prix }}</td>
-      </ng-container>
+          <!-- Secteur -->
+          <mat-form-field appearance="outline" class="narrow-form-field">
+            <mat-label>Secteur</mat-label>
+            <input matInput [(ngModel)]="appartementForm.secteur" name="secteur" required>
+          </mat-form-field>
 
-      <!-- Max Membres Column -->
-      <ng-container matColumnDef="maxMembre">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header>Max Membres</th>
-        <td mat-cell *matCellDef="let element">{{ element.maxMembre }}</td>
-      </ng-container>
+          <!-- Prix -->
+          <mat-form-field appearance="outline" class="narrow-form-field">
+            <mat-label>Prix</mat-label>
+            <input matInput type="number" [(ngModel)]="appartementForm.prix" name="prix" required>
+          </mat-form-field>
 
-      <!-- Status Column -->
-      <ng-container matColumnDef="status">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header>Status</th>
-        <td mat-cell *matCellDef="let element">{{ element.status }}</td>
-      </ng-container>
+          <!-- Max Membres -->
+          <mat-form-field appearance="outline" class="narrow-form-field">
+            <mat-label>Max Membres</mat-label>
+            <input matInput type="number" [(ngModel)]="appartementForm.maxMembre" name="maxMembre" required>
+          </mat-form-field>
 
-      <!-- Action Column -->
-      <ng-container matColumnDef="action">
-        <th mat-header-cell *matHeaderCellDef>Action</th>
-        <td mat-cell *matCellDef="let element">
-          <button mat-raised-button color="primary" (click)="showChambres(element)">
-            Afficher les chambres
-          </button>
-        </td>
-      </ng-container>
+          <!-- Description -->
+          <mat-form-field appearance="outline" class="narrow-form-field">
+            <mat-label>Description</mat-label>
+            <textarea matInput [(ngModel)]="appartementForm.description" name="description"></textarea>
+          </mat-form-field>
 
-      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-      <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
-    </table>
+          <!-- Status -->
+          <mat-form-field appearance="outline" class="narrow-form-field">
+            <mat-label>Status</mat-label>
+            <mat-select [(ngModel)]="appartementForm.status" name="status" required>
+              <mat-option value="disponible">Disponible</mat-option>
+              <mat-option value="loué">Loué</mat-option>
+              <mat-option value="en maintenance">En maintenance</mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <!-- ID Propriétaire -->
+          <mat-form-field appearance="outline" class="narrow-form-field">
+            <mat-label>ID Propriétaire</mat-label>
+            <input matInput type="number" [(ngModel)]="appartementForm.proprietaireId" name="proprietaireId" required>
+          </mat-form-field>
+
+          <!-- Boutons -->
+          <div class="form-actions">
+            <button mat-raised-button type="submit" color="primary">Sauvegarder</button>
+            <button mat-raised-button (click)="closeAppartementForm()" color="warn">Annuler</button>
+          </div>
+        </form>
+      </div>
+    </div>
   </div>
 
-  <!-- Affichage des chambres de l'appartement sélectionné -->
-  <div *ngIf="selectedAppartement" class="chambres-details">
-    <h3>Chambres de l'appartement {{ selectedAppartement.ville }}</h3>
-    <button (click)="closeChambres()">Retour vers appartements</button>
-    <table mat-table [dataSource]="selectedAppartement.chambres" class="mat-elevation-z8">
-      <ng-container matColumnDef="description">
-        <th mat-header-cell *matHeaderCellDef>Description</th>
-        <td mat-cell *matCellDef="let chambre">{{ chambre.description }}</td>
-      </ng-container>
+  <!-- Gestion des chambres -->
+  <div *ngIf="selectedAppartement">
+    <h3>Chambres pour {{ selectedAppartement.ville }}</h3>
+    <button mat-raised-button (click)="closeChambres()">Retour</button>
 
-      <ng-container matColumnDef="prix">
-        <th mat-header-cell *matHeaderCellDef>Prix</th>
-        <td mat-cell *matCellDef="let chambre">{{ chambre.prix }}</td>
-      </ng-container>
+    <!-- Liste des chambres dans des cartes Material -->
+    <div class="card-container">
+      <mat-card *ngFor="let chambre of selectedAppartement.chambres" class="mat-card">
 
-      <ng-container matColumnDef="status">
-        <th mat-header-cell *matHeaderCellDef>Status</th>
-        <td mat-cell *matCellDef="let chambre">{{ chambre.status }}</td>
-      </ng-container>
+        <mat-card-header>
+          <mat-card-title>Chambre {{ chambre.id }}</mat-card-title>
+          <mat-card-subtitle>Prix: {{ chambre.prix }} MAD</mat-card-subtitle>
+        </mat-card-header>
+        <img class="card-image" src="https://imganuncios.mitula.net/appartement_a_vendre_a_oujda_4290000731528205373.jpg" alt="Chambre">
+        <mat-card-content>
+          <p><strong>Description:</strong> {{ chambre.description }}</p>
 
-      <tr mat-header-row *matHeaderRowDef="['description', 'prix', 'status']"></tr>
-      <tr mat-row *matRowDef="let row; columns: ['description', 'prix', 'status']"></tr>
-    </table>
+        </mat-card-content>
+      </mat-card>
+    </div>
+
+    <!-- Formulaire pour ajouter une chambre -->
+    <button mat-raised-button color="accent" (click)="openChambreForm()">Ajouter une Chambre</button>
+    <div *ngIf="chambreFormVisible" class="form-container">
+      <h2>{{ 'Ajouter une Chambre'}}</h2>
+      <form (ngSubmit)="addChambre()">
+        <!-- Description -->
+        <mat-form-field appearance="outline" class="narrow-form-field">
+          <mat-label>Description de la chambre</mat-label>
+          <input matInput [(ngModel)]="chambreForm.description" name="description" required>
+        </mat-form-field>
+
+        <!-- Prix -->
+        <mat-form-field appearance="outline" class="narrow-form-field">
+          <mat-label>Prix</mat-label>
+          <input matInput type="number" [(ngModel)]="chambreForm.prix" name="prix" required>
+        </mat-form-field>
+
+        <!-- Type -->
+        <mat-form-field appearance="outline" class="narrow-form-field">
+          <mat-label>Type</mat-label>
+          <input matInput [(ngModel)]="chambreForm.type" name="type">
+        </mat-form-field>
+
+        <!-- Boutons -->
+        <div class="form-actions">
+          <button mat-raised-button type="submit" color="primary">Sauvegarder</button>
+          <button mat-raised-button (click)="openChambreForm()" color="warn">Annuler</button>
+        </div>
+      </form>
+    </div>
   </div>
 </div>
