@@ -17,8 +17,8 @@
       <td>{{ proprietaire.telephone }}</td>
       <td>{{ proprietaire.adresse }}</td>
       <td>
-        <button (click)="editProprietaire(proprietaire.id)">Modifier</button>
-        <button (click)="deleteProprietaire(proprietaire.id)">Supprimer</button>
+        <button mat-raised-button color="primary" (click)="editProprietaire(proprietaire.id)">Modifier</button>
+        <button mat-raised-button color="warn" (click)="deleteProprietaire(proprietaire.id)">Supprimer</button>
       </td>
     </tr>
     </tbody>

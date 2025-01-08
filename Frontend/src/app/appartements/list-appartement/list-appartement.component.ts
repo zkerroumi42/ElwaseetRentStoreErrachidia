@@ -1,9 +1,8 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
-import { AppartementService } from './appartement.service'; // Assurez-vous que le service est correctement importé
+import { AppartementService } from './appartement.service';
 
-// Définition de l'interface Chambre
 interface Chambre {
   id: number;
   description: string;
@@ -13,7 +12,6 @@ interface Chambre {
   type: string;
 }
 
-// Définition de l'interface Appartement
 interface Appartement {
   id: number;
   ville: string;
@@ -26,6 +24,7 @@ interface Appartement {
   typelocataire: string;
   typeoffre: string;
   chambres: Chambre[];
+  proprietaireId: number;
 }
 
 @Component({
@@ -34,24 +33,49 @@ interface Appartement {
   styleUrls: ['./list-appartement.component.css']
 })
 export class ListAppartementComponent implements OnInit {
-  // Colonnes affichées dans le tableau
   displayedColumns: string[] = ['ville', 'secteur', 'prix', 'maxMembre', 'status', 'action'];
   dataSource: MatTableDataSource<Appartement> = new MatTableDataSource<Appartement>([]);
-  appartements: Appartement[] = []; // Liste des appartements récupérés
-  selectedAppartement: Appartement | null = null; // Appartement sélectionné
+  appartements: Appartement[] = [];
+  selectedAppartement: Appartement | null = null;
 
-  @ViewChild(MatSort) sort!: MatSort; // Référence pour le tri
+  // Variables pour les formulaires d'ajout/édition
+  appartementForm: Appartement = {
+    id: 0,
+    ville: '',
+    secteur: '',
+    prix: 0,
+    maxMembre: 0,
+    description: '',
+    status: '',
+    bonus: '',
+    typelocataire: '',
+    typeoffre: '',
+    chambres: [],
+    proprietaireId: 0,
+  };
+
+  chambreForm: Chambre = {
+    id: 0,
+    description: '',
+    maxMembers: 0,
+    prix: 0,
+    status: '',
+    type: ''
+  };
+
+  appartementFormVisible: boolean = false;
+  chambreFormVisible: boolean = false;
+
+  @ViewChild(MatSort) sort!: MatSort;
 
   constructor(private appartementService: AppartementService) {}
 
   ngOnInit(): void {
-    // Récupération des appartements à partir du service
     this.appartementService.getAppartements().subscribe(
       data => {
-        console.log('Appartements récupérés :', data);
         this.appartements = data;
         this.dataSource = new MatTableDataSource<Appartement>(this.appartements);
-        this.dataSource.sort = this.sort; // Assigner le tri à la source de données
+        this.dataSource.sort = this.sort;
       },
       error => {
         console.error('Erreur lors de la récupération des appartements :', error);
@@ -59,19 +83,90 @@ export class ListAppartementComponent implements OnInit {
     );
   }
 
-  // Filtrage des résultats dans le tableau
   applyFilter(event: Event): void {
     const filterValue = (event.target as HTMLInputElement).value;
     this.dataSource.filter = filterValue.trim().toLowerCase();
   }
 
-  // Afficher les chambres de l'appartement sélectionné
   showChambres(appartement: Appartement): void {
     this.selectedAppartement = appartement;
   }
 
-  // Revenir à la liste des appartements
   closeChambres(): void {
     this.selectedAppartement = null;
+  }
+
+  // Fonction pour ouvrir un formulaire d'ajout/modification d'appartement
+  openAppartementForm(appartement: Appartement | null = null): void {
+    if (appartement) {
+      this.appartementForm = { ...appartement }; // Pré-remplir le formulaire avec les données de l'appartement
+    } else {
+      this.appartementForm = {
+        id: 0,
+        ville: '',
+        secteur: '',
+        prix: 0,
+        maxMembre: 0,
+        description: '',
+        status: '',
+        bonus: '',
+        typelocataire: '',
+        typeoffre: '',
+        chambres: [],
+        proprietaireId: 0,
+      };
+    }
+    this.appartementFormVisible = !this.appartementFormVisible; // Afficher le formulaire d'appartement
+  }
+
+  closeAppartementForm(): void {
+    this.appartementFormVisible = false; // Cacher le formulaire d'appartement
+  }
+
+  // Ajouter ou mettre à jour un appartement
+  saveAppartement(): void {
+    if (this.appartementForm.id === 0) {
+      this.appartementService.addAppartement(this.appartementForm).subscribe(
+        response => {
+          this.appartements.push(response);
+          this.dataSource.data = [...this.appartements];
+          this.closeAppartementForm();
+        },
+        error => {
+          console.error('Erreur lors de l\'ajout de l\'appartement :', error);
+        }
+      );
+    } else {
+      this.appartementService.updateAppartement(this.appartementForm).subscribe(
+        response => {
+          const index = this.appartements.findIndex(app => app.id === response.id);
+          this.appartements[index] = response;
+          this.dataSource.data = [...this.appartements];
+          this.closeAppartementForm();
+        },
+        error => {
+          console.error('Erreur lors de la mise à jour de l\'appartement :', error);
+        }
+      );
+    }
+  }
+
+  // Ajouter une chambre
+  addChambre(): void {
+    if (this.selectedAppartement) {
+      this.appartementService.addChambre(this.selectedAppartement.id, this.chambreForm).subscribe(
+        response => {
+          this.selectedAppartement!.chambres.push(response);
+          this.chambreFormVisible = false; // Fermer le formulaire après l'ajout
+        },
+        error => {
+          console.error('Erreur lors de l\'ajout de la chambre :', error);
+        }
+      );
+    }
+  }
+
+  openChambreForm(): void {
+    this.chambreFormVisible = !this.chambreFormVisible; // Afficher le formulaire de chambre
   }
 }
