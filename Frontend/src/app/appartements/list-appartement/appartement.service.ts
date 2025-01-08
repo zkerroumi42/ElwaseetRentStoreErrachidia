@@ -7,7 +7,7 @@ import { Observable } from 'rxjs';
 })
 export class AppartementService {
 
-  private apiUrl = 'http://localhost:8080/api/appartements'; // L'URL de votre API
+  private apiUrl = 'http://16.171.138.8:8080/api/appartements'; // L'URL de votre API
 
   constructor(private http: HttpClient) {}
 

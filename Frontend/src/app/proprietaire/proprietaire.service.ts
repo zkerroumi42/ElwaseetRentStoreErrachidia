@@ -7,7 +7,7 @@ import { Proprietaire } from './proprietaire.model';
 })
 export class ProprietaireService {
 
-  private apiUrl = 'http://localhost:8080/api/proprietaires'; // API endpoint
+  private apiUrl = 'http://16.171.138.8:8080/api/proprietaires'; // API endpoint
 
   constructor(private http: HttpClient) { }
 
